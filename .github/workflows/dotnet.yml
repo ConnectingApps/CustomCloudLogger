@@ -1,28 +1,40 @@
-# This workflow will build a .NET project
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
-
-name: .NET
+name: .NET CI
 
 on:
   push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+    branches:
+      - main
+      - release
+      - develop
+      - feature/**
+      - bugfix/**
 
 jobs:
-  build:
-
+  build_and_test:
+    name: Build and Test
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: 8.0.x
-    - name: Restore dependencies
-      run: dotnet restore
-    - name: Build
-      run: dotnet build --no-restore
-    - name: Test
-      run: dotnet test --no-build --verbosity normal
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.0.x' 
+
+      - name: Restore dependencies
+        run: dotnet restore CustomCloudLogger.sln
+
+      - name: Build Solution
+        run: dotnet build CustomCloudLogger.sln --configuration Release --no-restore
+
+      - name: Run Tests
+        run: python -c "import os; os.system('dotnet test CustomCloudLogger.sln --configuration Release --no-build --verbosity normal  --logger trx');"  
+
+      - name: Publish Test Results
+        uses: dorny/test-reporter@v1
+        with:
+          name: 'Test Results'
+          path: '**/TestResults/**/*.trx'
+          reporter: 'dotnet-trx'
