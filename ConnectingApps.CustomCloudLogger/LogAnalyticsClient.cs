@@ -45,7 +45,7 @@ public class LogAnalyticsClient : IDisposable
             throw new ArgumentNullException(nameof(sharedKey), "sharedKey cannot be null or empty");
         }
 
-        if (!IsBase64String(sharedKey))
+        if (!StringAnalyzer.IsBase64String(sharedKey))
         {
             throw new ArgumentException($"{nameof(sharedKey)} must be a valid Base64 encoded string", nameof(sharedKey));
         }
@@ -95,7 +95,7 @@ public class LogAnalyticsClient : IDisposable
             throw new ArgumentOutOfRangeException(nameof(logType), logType.Length, "The size limit for this parameter is 100 characters.");
         }
 
-        if (!this.IsAlphaNumUnderscore(logType))
+        if (!StringAnalyzer.IsAlphaNumUnderscore(logType))
         {
             throw new ArgumentOutOfRangeException(nameof(logType), logType, "Log-Type can only contain letters, numbers, and underscore (_). It does not support numerics or special characters.");
         }
@@ -131,7 +131,7 @@ public class LogAnalyticsClient : IDisposable
             throw new ArgumentOutOfRangeException(nameof(logType), logType.Length, "The size limit for this parameter is 100 characters.");
         }
 
-        if (!this.IsAlphaNumUnderscore(logType))
+        if (!StringAnalyzer.IsAlphaNumUnderscore(logType))
         {
             throw new ArgumentOutOfRangeException(nameof(logType), logType, "Log-Type can only contain letters, numbers, and underscore (_). It does not support numerics or special characters.");
         }
@@ -183,7 +183,7 @@ public class LogAnalyticsClient : IDisposable
         string signedString;
 
         var encoding = new ASCIIEncoding();
-        var sharedKeyBytes = Convert.FromBase64String(this._sharedKey);
+        var sharedKeyBytes = Convert.FromBase64String(_sharedKey);
         var stringToSignBytes = encoding.GetBytes(stringToSign);
         using (var hmacsha256Encryption = new HMACSHA256(sharedKeyBytes))
         {
@@ -191,18 +191,7 @@ public class LogAnalyticsClient : IDisposable
             signedString = Convert.ToBase64String(hashBytes);
         }
 
-        return $"SharedKey {this._workspaceId}:{signedString}";
-    }
-
-    private bool IsAlphaNumUnderscore(string str)
-    {
-        return Regex.IsMatch(str, @"^[a-zA-Z0-9_]+$");
-    }
-
-    private bool IsBase64String(string str)
-    {
-        str = str.Trim();
-        return str.Length % 4 == 0 && Regex.IsMatch(str, @"^[a-zA-Z0-9\+/]*={0,3}$", RegexOptions.None);
+        return $"SharedKey {_workspaceId}:{signedString}";
     }
 
     private void ValidatePropertyTypes<T>(T entity)

@@ -6,20 +6,14 @@ public class LogAnalyticsClientTest : IDisposable
 {
     private static readonly string WorkSpaceId;
     private static readonly string SharedKey;
-    private readonly LogAnalyticsClient _client;
-
-
+    private readonly LogAnalyticsClient _client = new(WorkSpaceId, SharedKey);
+    
     static LogAnalyticsClientTest()
     {
         WorkSpaceId = Environment.GetEnvironmentVariable("WORKSPACE_ID")!;
         SharedKey = Environment.GetEnvironmentVariable("SHARED_KEY")!;
         WorkSpaceId.Should().NotBeNullOrEmpty();
         SharedKey.Should().NotBeNullOrEmpty();
-    }
-
-    public LogAnalyticsClientTest()
-    {
-        _client = new LogAnalyticsClient(WorkSpaceId, SharedKey);
     }
 
     [Fact]
