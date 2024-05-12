@@ -20,7 +20,7 @@ public class LogAnalyticsClient : IDisposable
         DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
     };
 
-    private static readonly HashSet<Type> AllowedTypes = new HashSet<Type>
+    private static readonly HashSet<Type> AllowedTypes = new()
     {
         typeof(string), typeof(bool), typeof(bool?), typeof(double), typeof(double?),
         typeof(int), typeof(int?), typeof(long), typeof(long?),
@@ -128,7 +128,7 @@ public class LogAnalyticsClient : IDisposable
 
         var dateTimeNow = DateTime.UtcNow.ToString("r", System.Globalization.CultureInfo.InvariantCulture);
         var entityAsJson = JsonSerializer.Serialize(entities, SerializeOptions);
-        var authSignature = this.GetAuthSignature(entityAsJson, dateTimeNow);
+        var authSignature = GetAuthSignature(entityAsJson, dateTimeNow);
 
         using var request = new HttpRequestMessage(HttpMethod.Post, this._requestBaseUrl);
         request.Headers.Clear();
