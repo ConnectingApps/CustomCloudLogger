@@ -2,7 +2,7 @@
 
 namespace ConnectingApps.CustomCloudLogger.Test;
 
-public class LogAnalyticsClientTest
+public class LogAnalyticsClientTest : IDisposable
 {
     private static readonly string WorkSpaceId;
     private static readonly string SharedKey;
@@ -35,4 +35,8 @@ public class LogAnalyticsClientTest
         await _client.SendLogEntry(logEntry, "TestLog");
     }
     
+    public void Dispose()
+    {
+        _client.Dispose();
+    }
 }

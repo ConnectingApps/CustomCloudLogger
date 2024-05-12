@@ -14,7 +14,7 @@ namespace ConnectingApps.CustomCloudLogger;
 /// <summary>
 /// Client to send logs to Azure Log Analytics.
 /// </summary>
-public class LogAnalyticsClient
+public class LogAnalyticsClient : IDisposable
 {
     private static readonly JsonSerializerOptions SerializeOptions = new()
     {
@@ -29,14 +29,9 @@ public class LogAnalyticsClient
     };
 
     private readonly HttpClient _httpClient;
-
-    private string WorkspaceId { get; }
-
-    private string SharedKey { get; }
-
-    private string AzureEndpoint { get; }
-
-    private string RequestBaseUrl { get; }
+    private readonly string _workspaceId;
+    private readonly string _sharedKey;
+    private readonly string _requestBaseUrl;
 
     private LogAnalyticsClient(HttpClient client, string workspaceId, string sharedKey, string endPointOverride = null)
     {
@@ -55,10 +50,10 @@ public class LogAnalyticsClient
             throw new ArgumentException($"{nameof(sharedKey)} must be a valid Base64 encoded string", nameof(sharedKey));
         }
 
-        AzureEndpoint = string.IsNullOrEmpty(endPointOverride) ? Consts.AzureCommercialEndpoint : endPointOverride;
-        WorkspaceId = workspaceId;
-        SharedKey = sharedKey;
-        RequestBaseUrl = $"https://{WorkspaceId}.{AzureEndpoint}/api/logs?api-version={Consts.ApiVersion}";
+        var azureEndpoint = string.IsNullOrEmpty(endPointOverride) ? Consts.AzureCommercialEndpoint : endPointOverride;
+        _workspaceId = workspaceId;
+        _sharedKey = sharedKey;
+        _requestBaseUrl = $"https://{_workspaceId}.{azureEndpoint}/api/logs?api-version={Consts.ApiVersion}";
 
         _httpClient = client;
     }
@@ -154,7 +149,7 @@ public class LogAnalyticsClient
         var entityAsJson = JsonSerializer.Serialize(entities, SerializeOptions);
         var authSignature = this.GetAuthSignature(entityAsJson, dateTimeNow);
 
-        using var request = new HttpRequestMessage(HttpMethod.Post, this.RequestBaseUrl);
+        using var request = new HttpRequestMessage(HttpMethod.Post, this._requestBaseUrl);
         request.Headers.Clear();
         request.Headers.Add("Authorization", authSignature);
         request.Headers.Add("Log-Type", logType);
@@ -188,7 +183,7 @@ public class LogAnalyticsClient
         string signedString;
 
         var encoding = new ASCIIEncoding();
-        var sharedKeyBytes = Convert.FromBase64String(this.SharedKey);
+        var sharedKeyBytes = Convert.FromBase64String(this._sharedKey);
         var stringToSignBytes = encoding.GetBytes(stringToSign);
         using (var hmacsha256Encryption = new HMACSHA256(sharedKeyBytes))
         {
@@ -196,7 +191,7 @@ public class LogAnalyticsClient
             signedString = Convert.ToBase64String(hashBytes);
         }
 
-        return $"SharedKey {this.WorkspaceId}:{signedString}";
+        return $"SharedKey {this._workspaceId}:{signedString}";
     }
 
     private bool IsAlphaNumUnderscore(string str)
@@ -223,5 +218,10 @@ public class LogAnalyticsClient
                 throw new ArgumentOutOfRangeException($"Property '{propertyInfo.Name}' of entity with type '{entity.GetType()}' is not one of the valid properties. Valid properties are String, Boolean, Double, Integer, DateTime, and Guid.");
             }
         }
+    }
+
+    public void Dispose()
+    {
+        _httpClient.Dispose();
     }
 }
