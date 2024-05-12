@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace ConnectingApps.CustomCloudLogger;
 
 /// <summary>
-/// Client to send logs to Azure Log Analytics.
+/// Client to send logs to Azure Log Analytics Workspace
 /// </summary>
 public class LogAnalyticsClient : IDisposable
 {
@@ -57,27 +57,13 @@ public class LogAnalyticsClient : IDisposable
         _httpClient = client;
     }
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="LogAnalyticsClient"/> class.
-    /// </summary>
-    /// <param name="workspaceId">Azure Log Analytics Workspace ID</param>
-    /// <param name="sharedKey">Azure Log Analytics Workspace Shared Key</param>
-    /// <param name="endPointOverride">The Azure Cloud to use.</param>
     public LogAnalyticsClient(string workspaceId, string sharedKey, string? endPointOverride = null)
         : this(new HttpClient(), workspaceId, sharedKey, endPointOverride)
     {
     }
-
-    /// <summary>
-    /// Send an entity as a single log entry to Azure Log Analytics.
-    /// </summary>
-    /// <typeparam name="T">Entity Type</typeparam>
-    /// <param name="entity">The object</param>
-    /// <param name="logType">The log type</param>
-    /// <param name="resourceId">The resource id</param>
-    /// <param name="timeGeneratedCustomFieldName">The name of the field that contains the Time Generated data</param>
-    /// <returns>Does not return anything.</returns>
-    public Task SendLogEntry<T>(T entity, string logType, string? resourceId = null, string? timeGeneratedCustomFieldName = null)
+    
+    public Task SendLogEntries<T>(T entity, string logType, string? resourceId = null,
+        string? timeGeneratedCustomFieldName = null)
     {
         if (entity == null)
         {
@@ -98,24 +84,18 @@ public class LogAnalyticsClient : IDisposable
 
         if (!StringAnalyzer.IsAlphaNumUnderscore(logType))
         {
-            throw new ArgumentOutOfRangeException(nameof(logType), logType, "Log-Type can only contain letters, numbers, and underscore (_). It does notor special characters.");
+            throw new ArgumentOutOfRangeException(nameof(logType), logType, 
+                "LogType can only contain letters, numbers, and underscore (_). " +
+                "It does no allow special characters.");
         }
 
         ValidatePropertyTypes(entity);
         List<T> list = new List<T> { entity };
         return SendLogEntries(list, logType, resourceId, timeGeneratedCustomFieldName);
     }
-
-    /// <summary>
-    /// Send a collection of entities in a batch to Azure Log Analytics.
-    /// </summary>
-    /// <typeparam name="T">The entity type</typeparam>
-    /// <param name="entities">The collection of objects</param>
-    /// <param name="logType">The log type</param>
-    /// <param name="resourceId">The resource id</param>
-    /// <param name="timeGeneratedCustomFieldName">The name of the field that contains the Time Generated data</param>
-    /// <returns>Does not return anything.</returns>
-    public async Task SendLogEntries<T>(List<T> entities, string logType, string? resourceId = null, string? timeGeneratedCustomFieldName = null)
+    
+    private async Task SendLogEntries<T>(List<T> entities, string logType, string? resourceId = null,
+        string? timeGeneratedCustomFieldName = null)
     {
         if (entities == null)
         {
@@ -136,7 +116,11 @@ public class LogAnalyticsClient : IDisposable
         {
             throw new ArgumentOutOfRangeException(nameof(logType), logType, "Log-Type can only contain letters, numbers, and underscore (_). It does not support numerics or special characters.");
         }
-
+        await SendLogEntriesPrivate(entities, logType, resourceId, timeGeneratedCustomFieldName);
+    }
+    
+    private async Task SendLogEntriesPrivate<T>(List<T> entities, string logType, string? resourceId = null, string? timeGeneratedCustomFieldName = null)
+    {
         foreach (var entity in entities)
         {
             ValidatePropertyTypes(entity);

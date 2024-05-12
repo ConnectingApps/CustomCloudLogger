@@ -26,7 +26,7 @@ public class LogAnalyticsClientTest : IDisposable
             Severity = "Info"
         };
 
-        await _client.SendLogEntry(logEntry, "TestLog");
+        await _client.SendLogEntries(logEntry, "TestLog");
     }
     
     public void Dispose()
