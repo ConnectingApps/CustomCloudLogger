@@ -126,11 +126,7 @@ public class LogAnalyticsClient : IDisposable
             ValidatePropertyTypes(entity);
         }
 
-        // Room for improvement: Identify if there is a timeGeneratedCustomFieldName specified, and if so, ensure the value of the field conforms with the ISO 8601 datetime format.
-
         var dateTimeNow = DateTime.UtcNow.ToString("r", System.Globalization.CultureInfo.InvariantCulture);
-
-
         var entityAsJson = JsonSerializer.Serialize(entities, SerializeOptions);
         var authSignature = this.GetAuthSignature(entityAsJson, dateTimeNow);
 
@@ -142,13 +138,11 @@ public class LogAnalyticsClient : IDisposable
         request.Headers.Add("x-ms-date", dateTimeNow);
         if (!string.IsNullOrWhiteSpace(timeGeneratedCustomFieldName))
         {
-            // The name of the field that contains custom timestamp data.
             request.Headers.Add("time-generated-field", timeGeneratedCustomFieldName);
         }
 
         if (!string.IsNullOrWhiteSpace(resourceId))
         {
-            // The Resource ID in Azure for a given resource to connect the logs with.
             request.Headers.Add("x-ms-AzureResourceId", resourceId);
         }
 
