@@ -6,7 +6,6 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace ConnectingApps.CustomCloudLogger;
@@ -33,7 +32,7 @@ public class LogAnalyticsClient : IDisposable
     private readonly string _sharedKey;
     private readonly string _requestBaseUrl;
 
-    private LogAnalyticsClient(HttpClient client, string workspaceId, string sharedKey, string endPointOverride = null)
+    private LogAnalyticsClient(HttpClient client, string workspaceId, string sharedKey, string? endPointOverride = null)
     {
         if (string.IsNullOrEmpty(workspaceId))
         {
@@ -64,7 +63,7 @@ public class LogAnalyticsClient : IDisposable
     /// <param name="workspaceId">Azure Log Analytics Workspace ID</param>
     /// <param name="sharedKey">Azure Log Analytics Workspace Shared Key</param>
     /// <param name="endPointOverride">The Azure Cloud to use.</param>
-    public LogAnalyticsClient(string workspaceId, string sharedKey, string endPointOverride = null)
+    public LogAnalyticsClient(string workspaceId, string sharedKey, string? endPointOverride = null)
         : this(new HttpClient(), workspaceId, sharedKey, endPointOverride)
     {
     }
@@ -78,7 +77,7 @@ public class LogAnalyticsClient : IDisposable
     /// <param name="resourceId">The resource id</param>
     /// <param name="timeGeneratedCustomFieldName">The name of the field that contains the Time Generated data</param>
     /// <returns>Does not return anything.</returns>
-    public Task SendLogEntry<T>(T entity, string logType, string resourceId = null, string timeGeneratedCustomFieldName = null)
+    public Task SendLogEntry<T>(T entity, string logType, string? resourceId = null, string? timeGeneratedCustomFieldName = null)
     {
         if (entity == null)
         {
@@ -87,22 +86,24 @@ public class LogAnalyticsClient : IDisposable
 
         if (string.IsNullOrEmpty(logType))
         {
-            throw new ArgumentNullException(nameof(logType), $"parameter '{nameof(logType)}' cannot be null, and must contain a string.");
+            throw new ArgumentNullException(nameof(logType), $"parameter '{nameof(logType)}' " +
+                                                             $"cannot be null, and must contain a string.");
         }
 
         if (logType.Length > 100)
         {
-            throw new ArgumentOutOfRangeException(nameof(logType), logType.Length, "The size limit for this parameter is 100 characters.");
+            throw new ArgumentOutOfRangeException(nameof(logType), logType.Length, 
+                "The size limit for this parameter is 100 characters.");
         }
 
         if (!StringAnalyzer.IsAlphaNumUnderscore(logType))
         {
-            throw new ArgumentOutOfRangeException(nameof(logType), logType, "Log-Type can only contain letters, numbers, and underscore (_). It does not support numerics or special characters.");
+            throw new ArgumentOutOfRangeException(nameof(logType), logType, "Log-Type can only contain letters, numbers, and underscore (_). It does notor special characters.");
         }
 
-        this.ValidatePropertyTypes(entity);
+        ValidatePropertyTypes(entity);
         List<T> list = new List<T> { entity };
-        return this.SendLogEntries(list, logType, resourceId, timeGeneratedCustomFieldName);
+        return SendLogEntries(list, logType, resourceId, timeGeneratedCustomFieldName);
     }
 
     /// <summary>
@@ -114,7 +115,7 @@ public class LogAnalyticsClient : IDisposable
     /// <param name="resourceId">The resource id</param>
     /// <param name="timeGeneratedCustomFieldName">The name of the field that contains the Time Generated data</param>
     /// <returns>Does not return anything.</returns>
-    public async Task SendLogEntries<T>(List<T> entities, string logType, string resourceId = null, string timeGeneratedCustomFieldName = null)
+    public async Task SendLogEntries<T>(List<T> entities, string logType, string? resourceId = null, string? timeGeneratedCustomFieldName = null)
     {
         if (entities == null)
         {
@@ -138,7 +139,7 @@ public class LogAnalyticsClient : IDisposable
 
         foreach (var entity in entities)
         {
-            this.ValidatePropertyTypes(entity);
+            ValidatePropertyTypes(entity);
         }
 
         // Room for improvement: Identify if there is a timeGeneratedCustomFieldName specified, and if so, ensure the value of the field conforms with the ISO 8601 datetime format.
@@ -171,9 +172,7 @@ public class LogAnalyticsClient : IDisposable
         httpContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
 
         request.Content = httpContent;
-        var response = await this._httpClient.SendAsync(request).ConfigureAwait(false);
-
-        // Bubble up exceptions if there are any, don't swallow them here. This lets consumers handle it better.
+        var response = await _httpClient.SendAsync(request).ConfigureAwait(false);
         response.EnsureSuccessStatusCode();
     }
 
@@ -197,14 +196,17 @@ public class LogAnalyticsClient : IDisposable
     private void ValidatePropertyTypes<T>(T entity)
     {
         // Retrieve all properties of the entity type using reflection
-        var properties = entity.GetType().GetProperties();
+        var properties = entity!.GetType().GetProperties();
 
         // Validate each property's type
         foreach (var propertyInfo in properties)
         {
             if (!AllowedTypes.Contains(propertyInfo.PropertyType))
             {
-                throw new ArgumentOutOfRangeException($"Property '{propertyInfo.Name}' of entity with type '{entity.GetType()}' is not one of the valid properties. Valid properties are String, Boolean, Double, Integer, DateTime, and Guid.");
+                throw new ArgumentOutOfRangeException(
+                    $"Property '{propertyInfo.Name}' of entity with type '{entity.GetType()}' " +
+                    $"is not one of the valid properties:" +
+                    $" String, Boolean, Double, Integer, DateTime, and Guid.");
             }
         }
     }
