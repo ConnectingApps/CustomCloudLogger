@@ -5,6 +5,8 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConnectingApps.CustomCloudLogger", "ConnectingApps.CustomCloudLogger\ConnectingApps.CustomCloudLogger.csproj", "{D56DFD36-BA61-41C6-9F7F-BDDDE12A8899}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConnectingApps.CustomCloudLogger.Test", "ConnectingApps.CustomCloudLogger.Test\ConnectingApps.CustomCloudLogger.Test.csproj", "{4266E8F9-315F-4FCF-B5A1-D8FE47EA817E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{D56DFD36-BA61-41C6-9F7F-BDDDE12A8899}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D56DFD36-BA61-41C6-9F7F-BDDDE12A8899}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D56DFD36-BA61-41C6-9F7F-BDDDE12A8899}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4266E8F9-315F-4FCF-B5A1-D8FE47EA817E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4266E8F9-315F-4FCF-B5A1-D8FE47EA817E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4266E8F9-315F-4FCF-B5A1-D8FE47EA817E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4266E8F9-315F-4FCF-B5A1-D8FE47EA817E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
