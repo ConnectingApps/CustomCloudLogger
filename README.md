@@ -52,7 +52,9 @@ In the code shown above, these things are done:
 1. A single log entry is created because of the call to `LogEntryAsync`.
 1. Multiple log entries are created because of the call to `LogEntriesAsync`
 
-> Do not forget to dispose the client when using this in production code
+> **Do not forget to dispose the client when using this in production code.**
+
+> **A more complete example can be found [here](https://github.com/ConnectingApps/CustomCloudLogger/blob/main/ConnectingApps.CustomCloudLogger.Console/Program.cs).**
 
 ## What do to with Azure?
 In case you ran the code above, you'll find your your data in this table:

@@ -11,10 +11,10 @@
         <PackageIcon>Icon.png</PackageIcon>
         <RepositoryUrl>https://github.com/ConnectingApps/CustomCloudLogger</RepositoryUrl>
         <RepositoryType>Git</RepositoryType>
-        <PackageReleaseNotes>Improved dependencies and Readme</PackageReleaseNotes>
+        <PackageReleaseNotes>Production ready</PackageReleaseNotes>
         <Title>ConnectingApps.CustomCloudLogger</Title>
         <PackageReadmeFile>README.md</PackageReadmeFile>
-        <Version>1.0.1-initial</Version>
+        <Version>2.0.0</Version>
     </PropertyGroup>
 
     <ItemGroup>
