@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Security.Cryptography;
@@ -55,7 +56,6 @@ public class LogAnalyticsClient : IDisposable
         _workspaceId = workspaceId;
         _sharedKey = sharedKey;
         _requestBaseUrl = $"https://{_workspaceId}.{azureEndpoint}/api/logs?api-version={Consts.ApiVersion}";
-
         _httpClient = client;
     }
 
@@ -132,20 +132,19 @@ public class LogAnalyticsClient : IDisposable
         var entityAsJson = JsonSerializer.Serialize(entities, SerializeOptions);
         var authSignature = GetAuthSignature(entityAsJson, dateTimeNow);
 
+        var headers = new Dictionary<string, string?>()
+        {
+            {"Authorization", authSignature},
+            {"Log-Type", logType},
+            {"x-ms-date", dateTimeNow},
+            {"time-generated-field", timeGeneratedCustomFieldName},
+            {"x-ms-AzureResourceId", resourceId}
+        };
+        
         using var request = new HttpRequestMessage(HttpMethod.Post, this._requestBaseUrl);
-        request.Headers.Clear();
-        request.Headers.Add("Authorization", authSignature);
-        request.Headers.Add("Log-Type", logType);
-        request.Headers.Add("Accept", "application/json");
-        request.Headers.Add("x-ms-date", dateTimeNow);
-        if (!string.IsNullOrWhiteSpace(timeGeneratedCustomFieldName))
+        foreach (var header in headers.Where(h => !string.IsNullOrEmpty(h.Value)))
         {
-            request.Headers.Add("time-generated-field", timeGeneratedCustomFieldName);
-        }
-
-        if (!string.IsNullOrWhiteSpace(resourceId))
-        {
-            request.Headers.Add("x-ms-AzureResourceId", resourceId);
+            request.Headers.Add(header.Key, header.Value);
         }
 
         HttpContent httpContent = new StringContent(entityAsJson, Encoding.UTF8);
