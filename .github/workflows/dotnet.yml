@@ -50,5 +50,6 @@ jobs:
           path: '**/*.nupkg'  
 
       - name: Publish to NuGet
+        if: github.ref == 'refs/heads/main'
         run: dotnet nuget push "ConnectingApps.CustomCloudLogger/bin/Release/*.nupkg" --api-key ${{ secrets.NUGET_KEY }} --source https://api.nuget.org/v3/index.json       
           
