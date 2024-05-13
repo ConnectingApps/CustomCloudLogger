@@ -19,6 +19,8 @@ public class LogAnalyticsClient : IDisposable
     {
         DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
     };
+    
+    private static readonly ASCIIEncoding AsciiEncodingEncoding = new();
 
     private static readonly HashSet<Type> AllowedTypes = new()
     {
@@ -163,18 +165,15 @@ public class LogAnalyticsClient : IDisposable
                             x-ms-date:{dateString}
                             /api/logs
                             """.Replace(Environment.NewLine, "\n");
-        string signedString;
-
-        var encoding = new ASCIIEncoding();
+        
         var sharedKeyBytes = Convert.FromBase64String(_sharedKey);
-        var stringToSignBytes = encoding.GetBytes(stringToSign);
+        var stringToSignBytes = AsciiEncodingEncoding.GetBytes(stringToSign);
         using (var hmacsha256Encryption = new HMACSHA256(sharedKeyBytes))
         {
             var hashBytes = hmacsha256Encryption.ComputeHash(stringToSignBytes);
-            signedString = Convert.ToBase64String(hashBytes);
+            var signedString = Convert.ToBase64String(hashBytes);
+            return $"SharedKey {_workspaceId}:{signedString}";
         }
-
-        return $"SharedKey {_workspaceId}:{signedString}";
     }
 
     private void ValidatePropertyTypes<T>(T entity)
