@@ -26,7 +26,7 @@ public class LogAnalyticsClientTest : IDisposable
             Severity = "Info"
         };
 
-        await _client.SendLogEntries(logEntry, "TestLog");
+        await _client.LogEntryAsync(logEntry, "TestLog");
     }
     
     [Fact]
@@ -40,7 +40,7 @@ public class LogAnalyticsClientTest : IDisposable
             Correct = DateOnly.MaxValue
         };
 
-        await _client.SendLogEntries(logEntry, "TestLogCorrect");
+        await _client.LogEntryAsync(logEntry, "TestLogCorrect");
     }
     
     [Fact]
@@ -55,7 +55,7 @@ public class LogAnalyticsClientTest : IDisposable
             Correct = nullableDate
         };
 
-        await _client.SendLogEntries(logEntry, "TestLogCorrect");
+        await _client.LogEntryAsync(logEntry, "TestLogCorrect");
     }
     
     [Fact]
@@ -69,7 +69,7 @@ public class LogAnalyticsClientTest : IDisposable
             Wrong = new Tuple<string>("Hoi")
         };
 
-        var toFail = () => _client.SendLogEntries(logEntry, "TryLog");
+        var toFail = () => _client.LogEntryAsync(logEntry, "TryLog");
         await toFail.Should().ThrowAsync<ArgumentOutOfRangeException>();
     }
     

@@ -64,7 +64,7 @@ public class LogAnalyticsClient : IDisposable
     {
     }
     
-    public Task SendLogEntries<T>(T entity, string logType, string? resourceId = null,
+    public Task LogEntryAsync<T>(T entity, string logType, string? resourceId = null,
         string? timeGeneratedCustomFieldName = null)
     {
         if (entity == null)
@@ -75,28 +75,27 @@ public class LogAnalyticsClient : IDisposable
         if (string.IsNullOrEmpty(logType))
         {
             throw new ArgumentNullException(nameof(logType), $"parameter '{nameof(logType)}' " +
-                                                             $"cannot be null, and must contain a string.");
+                                                             $"cannot be null, and must be a string.");
         }
 
         if (logType.Length > 100)
         {
             throw new ArgumentOutOfRangeException(nameof(logType), logType.Length, 
-                "The size limit for this parameter is 100 characters.");
+                "The size limit is 100 characters.");
         }
 
         if (!StringAnalyzer.IsAlphaNumUnderscore(logType))
         {
             throw new ArgumentOutOfRangeException(nameof(logType), logType, 
-                "LogType can only contain letters, numbers, and underscore (_). " +
+                "LogType can only contain letters, numbers, and underscore." +
                 "It does no allow special characters.");
         }
 
         ValidatePropertyTypes(entity);
-        List<T> list = new List<T> { entity };
-        return SendLogEntries(list, logType, resourceId, timeGeneratedCustomFieldName);
+        return SendLogEntriesPrivateAsync(new List<T> {entity}, logType, resourceId, timeGeneratedCustomFieldName);
     }
     
-    private async Task SendLogEntries<T>(List<T> entities, string logType, string? resourceId = null,
+    public async Task LogEntriesAsync<T>(IReadOnlyList<T> entities, string logType, string? resourceId = null,
         string? timeGeneratedCustomFieldName = null)
     {
         if (entities == null)
@@ -106,22 +105,28 @@ public class LogAnalyticsClient : IDisposable
 
         if (string.IsNullOrEmpty(logType))
         {
-            throw new ArgumentNullException(nameof(logType), $"parameter '{nameof(logType)}' cannot be null, and must contain a string.");
+            throw new ArgumentNullException(nameof(logType), $"parameter '{nameof(logType)}' cannot be null, and must contain be a string.");
         }
 
         if (logType.Length > 100)
         {
-            throw new ArgumentOutOfRangeException(nameof(logType), logType.Length, "The size limit for this parameter is 100 characters.");
+            throw new ArgumentOutOfRangeException(nameof(logType), logType.Length, "The size limit is 100 characters.");
         }
 
         if (!StringAnalyzer.IsAlphaNumUnderscore(logType))
         {
-            throw new ArgumentOutOfRangeException(nameof(logType), logType, "Log-Type can only contain letters, numbers, and underscore (_). It does not support numerics or special characters.");
+            throw new ArgumentOutOfRangeException(nameof(logType), logType, "LogType can only contain letters, numbers, and underscore");
         }
-        await SendLogEntriesPrivate(entities, logType, resourceId, timeGeneratedCustomFieldName);
+
+        if (entities.Count == 0)
+        {
+            return;
+        }
+        
+        await SendLogEntriesPrivateAsync(entities, logType, resourceId, timeGeneratedCustomFieldName);
     }
     
-    private async Task SendLogEntriesPrivate<T>(List<T> entities, string logType, string? resourceId = null, string? timeGeneratedCustomFieldName = null)
+    private async Task SendLogEntriesPrivateAsync<T>(IReadOnlyList<T> entities, string logType, string? resourceId = null, string? timeGeneratedCustomFieldName = null)
     {
         foreach (var entity in entities)
         {
