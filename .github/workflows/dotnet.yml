@@ -47,4 +47,8 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: nuget-packages
-          path: '**/*.nupkg'          
+          path: '**/*.nupkg'  
+
+      - name: Publish to NuGet
+        run: dotnet nuget push "ConnectingApps.CustomCloudLogger/bin/Release/*.nupkg" --api-key ${{ secrets.NUGET_KEY }} --source https://api.nuget.org/v3/index.json       
+          
