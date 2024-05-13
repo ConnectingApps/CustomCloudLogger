@@ -4,6 +4,12 @@ namespace ConnectingApps.CustomCloudLogger.Test;
 
 public class LogAnalyticsClientTest : IDisposable
 {
+    public class TryData
+    {
+        public string X { get; set; }
+        public int Y { get; set; }
+    }
+    
     private static readonly string WorkSpaceId;
     private static readonly string SharedKey;
     private readonly LogAnalyticsClient _client = new(WorkSpaceId, SharedKey);
@@ -41,6 +47,27 @@ public class LogAnalyticsClientTest : IDisposable
         };
 
         await _client.LogEntryAsync(logEntry, "TestLogCorrect");
+    }
+    
+        
+    [Fact]
+    public async Task SendMessagePluralTest()
+    {
+        var logEntries = new TryData[]
+        {
+            new()
+            {
+                X = $"Test1 {Environment.MachineName}",
+                Y = 1,
+            },
+            new()
+            {
+                X = $"Test2 {Environment.MachineName}",
+                Y = 2,
+            }
+        };
+        await _client.LogEntryAsync(logEntries.First(), "TuplesLog");
+        await _client.LogEntriesAsync(logEntries, "TuplesLog");
     }
     
     [Fact]
