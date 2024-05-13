@@ -42,3 +42,9 @@ jobs:
           name: 'Test Results'
           path: '**/TestResults/**/*.trx'
           reporter: 'dotnet-trx'
+
+      - name: Upload NuGet packages as artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: nuget-packages
+          path: '**/*.nupkg'          
