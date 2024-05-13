@@ -10,7 +10,7 @@ Just create a custom object and send it to Log Analytics. It will be shown as a 
 
 ## NuGet
 
-The [CustomCloudLogger](https://www.nuget.org/packages/ConnectingApps.CustomCloudLogger/1.0.0-initial) is available on NuGet.
+The [CustomCloudLogger](https://www.nuget.org/packages/ConnectingApps.CustomCloudLogger/) is available on NuGet.
 
 ## Support for .NET Versions and Variants
 As explained, nearly all .NET variants and versions are supported. The `DateOnly` data type is also supported [when using .NET 6 or higher](https://devblogs.microsoft.com/dotnet/date-time-and-time-zone-enhancements-in-net-6/).

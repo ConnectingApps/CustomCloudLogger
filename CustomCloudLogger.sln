@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConnectingApps.CustomCloudL
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConnectingApps.CustomCloudLogger.Test", "ConnectingApps.CustomCloudLogger.Test\ConnectingApps.CustomCloudLogger.Test.csproj", "{4266E8F9-315F-4FCF-B5A1-D8FE47EA817E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConnectingApps.CustomCloudLogger.Console", "ConnectingApps.CustomCloudLogger.Console\ConnectingApps.CustomCloudLogger.Console.csproj", "{35B059B1-3632-482F-8F1E-1C7956DB7FD8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +26,9 @@ Global
 		{4266E8F9-315F-4FCF-B5A1-D8FE47EA817E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4266E8F9-315F-4FCF-B5A1-D8FE47EA817E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4266E8F9-315F-4FCF-B5A1-D8FE47EA817E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{35B059B1-3632-482F-8F1E-1C7956DB7FD8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{35B059B1-3632-482F-8F1E-1C7956DB7FD8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{35B059B1-3632-482F-8F1E-1C7956DB7FD8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{35B059B1-3632-482F-8F1E-1C7956DB7FD8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
