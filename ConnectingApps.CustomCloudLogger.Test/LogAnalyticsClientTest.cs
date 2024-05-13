@@ -6,7 +6,10 @@ public class LogAnalyticsClientTest : IDisposable
 {
     public class TryData
     {
-        public string X { get; set; }
+
+        // ReSharper disable once UnusedAutoPropertyAccessor.Global
+        public string X { get; set; } = null!;
+        // ReSharper disable once UnusedAutoPropertyAccessor.Global
         public int Y { get; set; }
     }
     

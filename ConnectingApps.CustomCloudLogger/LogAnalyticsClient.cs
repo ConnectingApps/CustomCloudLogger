@@ -137,7 +137,7 @@ public class LogAnalyticsClient : IDisposable
         var entityAsJson = JsonSerializer.Serialize(entities, SerializeOptions);
         var authSignature = GetAuthSignature(entityAsJson, dateTimeNow);
 
-        var headers = new Dictionary<string, string?>()
+        var headers = new Dictionary<string, string?>
         {
             {"Authorization", authSignature},
             {"Log-Type", logType},
@@ -191,6 +191,7 @@ public class LogAnalyticsClient : IDisposable
             if (!AllowedTypes.Contains(propertyInfo.PropertyType))
             {
                 var typedString = propertyInfo.PropertyType.ToString();
+                // Check for .NET 6+ types
                 if (typedString.EndsWith("System.DateOnly") || typedString.EndsWith("System.DateOnly]"))
                 {
                     continue;
