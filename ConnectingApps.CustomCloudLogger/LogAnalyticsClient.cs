@@ -185,10 +185,15 @@ public class LogAnalyticsClient : IDisposable
         {
             if (!AllowedTypes.Contains(propertyInfo.PropertyType))
             {
+                var typedString = propertyInfo.PropertyType.ToString();
+                if (typedString.EndsWith("System.DateOnly") || typedString.EndsWith("System.DateOnly]"))
+                {
+                    continue;
+                }
                 throw new ArgumentOutOfRangeException(
                     $"Property '{propertyInfo.Name}' of entity with type '{entity.GetType()}' " +
                     $"is not one of the valid properties:" +
-                    $" String, Boolean, Double, Integer, DateTime, and Guid.");
+                    $" String, Boolean, Double, Integer, DateTime, DateOnly and Guid.");
             }
         }
     }
