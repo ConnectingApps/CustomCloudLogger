@@ -156,7 +156,13 @@ public class LogAnalyticsClient : IDisposable
 
     private string GetAuthSignature(string serializedJsonObject, string dateString)
     {
-        string stringToSign = $"POST\n{Encoding.UTF8.GetBytes(serializedJsonObject).Length}\napplication/json\nx-ms-date:{dateString}\n/api/logs";
+        var stringToSign = $"""
+                            POST
+                            {Encoding.UTF8.GetBytes(serializedJsonObject).Length}
+                            application/json
+                            x-ms-date:{dateString}
+                            /api/logs
+                            """.Replace(Environment.NewLine, "\n");
         string signedString;
 
         var encoding = new ASCIIEncoding();
