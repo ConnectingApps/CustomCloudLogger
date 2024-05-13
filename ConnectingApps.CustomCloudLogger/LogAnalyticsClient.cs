@@ -14,7 +14,7 @@ namespace ConnectingApps.CustomCloudLogger;
 /// <summary>
 /// Client to send logs to Azure Log Analytics Workspace
 /// </summary>
-public class LogAnalyticsClient : IDisposable
+public class LogAnalyticsClient : IDisposable, ILogAnalyticsClient
 {
     private static readonly JsonSerializerOptions SerializeOptions = new()
     {
