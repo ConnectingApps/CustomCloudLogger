@@ -7,7 +7,6 @@ Send messages in a custom format to log analytics workspace in Azure
 The easiest and most generic way to send logs to Azure Log Analytics Workspace from your apps.
 Just create a custom object and send it to Log Analytics. It will be shown as a log entry in the logs. This helps make logging easy in your applications, regardless of wether you're using .NET Core, .NET Framework, Xamarin, Tizen etc. Almost all .NET variants and versions are supported. The product is inspired by a package developed for .NET Core and .NET 6 named [LogAnalytics.Client](https://www.nuget.org/packages/loganalytics.client).
 
-
 ## NuGet
 
 The [CustomCloudLogger](https://www.nuget.org/packages/ConnectingApps.CustomCloudLogger/) is available on NuGet.
@@ -68,7 +67,7 @@ TuplesLog_CL
 | where X_s contains "Test"
 ```
 
-If you are do not have a shared key to use here, you can generate one:
+If you do not have a shared key to use here, you can generate one:
 
 ```bash
 az monitor log-analytics workspace get-shared-keys --resource-group "YourResourceGroupName" --workspace-name "YourWorkspaceName"
@@ -76,4 +75,4 @@ az monitor log-analytics workspace get-shared-keys --resource-group "YourResourc
 
 ## Development 
 
-Contribute? Give it a go, but double check if the tests do succeed.
+Contribute? Give it a go, but double check if the tests do succeed. I also recommend reading [our article](https://www.codeproject.com/Articles/5382319/Simplifying-NET-Application-Logging-Seamless-Integ) about this product.
