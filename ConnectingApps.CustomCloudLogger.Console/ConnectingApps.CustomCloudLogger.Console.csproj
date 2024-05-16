@@ -8,7 +8,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="ConnectingApps.CustomCloudLogger" Version="1.0.1-initial" />
+      <PackageReference Include="ConnectingApps.CustomCloudLogger" Version="2.0.0" />
     </ItemGroup>
     
 </Project>
